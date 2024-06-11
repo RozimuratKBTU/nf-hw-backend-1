@@ -15,7 +15,7 @@ app.use('/api/v1/',globalRouter);
 
 
 app.get('/helloworld',(request,response) =>{
-  response.send("Hello World!");
+  response.send("Hello");
 })
 
 app.listen(PORT, () => {
