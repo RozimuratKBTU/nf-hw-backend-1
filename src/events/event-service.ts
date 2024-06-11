@@ -12,8 +12,11 @@ class EventService {
       return await EventModel.findById(id).exec();
     }
 
-    async getEvents(): Promise<IEvent[]> {
-      return await EventModel.find().exec(); 
+    async getEvents( page:number, limit:number, sortDirection:string,sortBy: string): Promise<IEvent[]> {
+       const  sortOptions = {}
+        sortOptions[sortBy] = sortDirection === 'asc' ? 1 : -1;
+       return await EventModel.find().limit(limit * 1).skip((page-1) * limit).
+           sort(sortOptions).exec();
     }
 
     async createEvent(createEventDto: CreateEventDto): Promise<IEvent> {

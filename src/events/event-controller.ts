@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { CreateEventDto } from './dtos/CreateEvent.dot';
 import EventService from './event-service';
+import Event from "./models/Event";
 
 class EventController {
     private eventService : EventService;
@@ -24,8 +25,20 @@ class EventController {
 
     getEvents = async (req: Request, res: Response): Promise<void> => {
         try {
-          const events = await this.eventService.getEvents();
-          res.status(200).json(events);
+            const {page = 1, limit=10, sortBy="name", sortDirection='asc'} = req.query;
+          const events = await this.eventService.getEvents(
+              +page,
+              +limit,
+              sortDirection as string,
+              sortBy as string
+          );
+          const count = await Event.countDocuments();
+          res.status(200).json({
+                  events,
+                  totalPages: Math.ceil(count / +limit),
+                  currentPage: +page,
+              }
+          );
         } catch (error: any) {
           res.status(500).send({ error: error.message });
         }
